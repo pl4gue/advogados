@@ -22,6 +22,11 @@ interface PreviewProps extends ThemeControlProps {
   onSelect: () => void;
 }
 
+function resolveAsset(path: string): string {
+  if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(path)) return path;
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+}
+
 function ThemeToggle({ mode, onToggleMode }: ThemeControlProps) {
   const next = mode === "dark" ? "claro" : "escuro";
   return (
@@ -35,7 +40,7 @@ function ThemeToggle({ mode, onToggleMode }: ThemeControlProps) {
 function Brand({ href = "#top" }: { href?: string }) {
   return (
     <a className="brand" href={href} aria-label={`Início: ${site.organization}`}>
-      {site.logo ? <img className="brand-logo" src={site.logo.src} alt={site.logo.alt} /> : <span className="brand-mark" aria-hidden="true">{site.organization.trim().charAt(0).toUpperCase()}</span>}
+      {site.logo ? <img className="brand-logo" src={resolveAsset(site.logo.src)} alt={site.logo.alt} /> : <span className="brand-mark" aria-hidden="true">{site.organization.trim().charAt(0).toUpperCase()}</span>}
       <span>{site.organization}<small>{site.tagline}</small></span>
     </a>
   );
@@ -71,7 +76,7 @@ function PreviewHeroText({ className = "" }: { className?: string }) {
 }
 
 function HeroImage({ className = "" }: { className?: string }) {
-  return <figure className={`hero-media ${className}`}><img src={site.hero.imageSrc} alt={site.hero.imageAlt} /><figcaption>{site.hero.imageAlt}</figcaption></figure>;
+  return <figure className={`hero-media ${className}`}><img src={resolveAsset(site.hero.imageSrc)} alt={site.hero.imageAlt} /><figcaption>{site.hero.imageAlt}</figcaption></figure>;
 }
 
 function EditorialHero() {
@@ -182,7 +187,7 @@ function MemberCard({ member, index = 0, compact = false }: { member: TeamMember
   return (
     <article className={`member-card${compact ? " member-card--compact" : ""}`}>
       <div className={`member-image member-image--${(index % 3) + 1}`}>
-        {member.image ? <img src={member.image.src} alt={member.image.alt} /> : <span role="img" aria-label={`Iniciais de ${member.name}`}>{member.initials}</span>}
+        {member.image ? <img src={resolveAsset(member.image.src)} alt={member.image.alt} /> : <span role="img" aria-label={`Iniciais de ${member.name}`}>{member.initials}</span>}
       </div>
       <div className="member-copy"><h3>{member.name}</h3><p className="member-role">{member.role}</p><p className="member-detail">{member.detail}</p></div>
     </article>

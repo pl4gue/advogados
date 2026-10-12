@@ -49,6 +49,20 @@ Em `theme.palette`, personalize nove cores para os modos claro e escuro: `backgr
 
 Use combinações com contraste suficiente, principalmente para texto, botões, links e foco. Os layouts são responsivos, mantêm HTML semântico, incluem link para pular ao conteúdo e respeitam a preferência de movimento reduzido.
 
+## Publicar no GitHub Pages
+
+O workflow `.github/workflows/deploy-pages.yml` compila e publica o site quando há `push` para `main`; também pode ser iniciado manualmente pela aba **Actions**. Ele usa `npm ci` e publica apenas o diretório `dist`, com permissões limitadas.
+
+Configuração inicial:
+
+1. Envie o repositório para o GitHub na branch `main`.
+2. Em **Settings → Pages → Build and deployment**, selecione **GitHub Actions** como origem.
+3. Aguarde o workflow **Deploy static site to GitHub Pages** terminar; a URL publicada aparece no job de deploy e em **Settings → Pages**.
+
+O Vite detecta o nome do repositório durante o build do Actions e define automaticamente o caminho de projeto (`/<repositório>/`). Para um repositório `conta.github.io`, usa a raiz. Os caminhos das imagens próprias também recebem o prefixo correto. Se a branch principal tiver outro nome, atualize o gatilho `push.branches` no workflow.
+
+Para reverter uma publicação, reverta o commit e envie a alteração; o workflow fará um novo deploy. Não é necessário configurar segredo ou chave de publicação.
+
 ## Antes de publicar
 
 Atualize título e descrição em `index.html`; confirme nome, grafia, contatos, imagens, links, textos legais e métricas com o cliente. O conteúdo de demonstração é fictício e deve ser revisado por profissionais habilitados. Faça uma revisão em celular e desktop e execute `npm run build`.
