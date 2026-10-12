@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Comunidade reunida em uma praça da cidade</title>
+  <desc id="desc">Ilustração panorâmica em tons terrosos de pessoas, árvores e edifícios cívicos ao entardecer.</desc>
+  <defs>
+    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#d5aa80"/><stop offset=".48" stop-color="#e8cfaa"/><stop offset="1" stop-color="#b7c2a9"/></linearGradient>
+    <linearGradient id="ground" x2="0" y2="1"><stop stop-color="#78927d"/><stop offset="1" stop-color="#354f44"/></linearGradient>
+    <radialGradient id="sun"><stop stop-color="#f5d6a0"/><stop offset="1" stop-color="#eabf84"/></radialGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h2400v1000H0z"/>
+  <circle cx="1780" cy="280" r="170" fill="url(#sun)" opacity=".9"/>
+  <path fill="#b1b59e" d="M0 630 250 455l250 169 210-206 310 224 205-167 290 152 268-245 294 238 215-154 308 202v332H0z"/>
+  <path fill="#879a84" d="M0 721 250 570l214 140 267-226 266 235 236-149 243 158 257-212 255 217 206-116 206 144v239H0z"/>
+  <path fill="#c4ad8a" d="M1360 542h556v243h-556z"/>
+  <path fill="#f1e4cc" d="M1300 550 1635 385l336 165z"/>
+  <path fill="#34584a" d="M1415 600h54v185h-54zm108 0h54v185h-54zm108 0h54v185h-54zm108 0h54v185h-54z"/>
+  <path fill="#e6d7bd" d="M1565 680h140v105h-140z"/>
+  <path fill="#476552" d="M0 738q240-93 483 8v254H0zm1970-27q193-117 430 7v282h-430z"/>
+  <g fill="#6e866d"><circle cx="345" cy="575" r="104"/><circle cx="450" cy="610" r="78"/><circle cx="2150" cy="565" r="115"/><circle cx="2265" cy="620" r="82"/></g>
+  <g fill="#8e684f"><path d="M325 635h38v145h-38zM2134 641h38v144h-38z"/></g>
+  <path fill="url(#ground)" d="M0 780q348-85 683 7t694-2 1023 15v200H0z"/>
+  <path fill="#d9c7a8" opacity=".5" d="M985 1000q150-125 330-220 165 79 328 220z"/>
+  <g>
+    <g fill="#243d34"><circle cx="865" cy="696" r="37"/><path d="M825 737q40-25 80 0l30 150H795z"/><path d="m810 773-72 75 18 18 82-65zm100 0 76 69-16 20-83-58z"/></g>
+    <g fill="#a35f43"><circle cx="1050" cy="676" r="34"/><path d="M1014 714q36-22 72 0l26 164h-124z"/><path d="m1013 750-67 77 18 15 76-66zm76 0 65 78-17 15-73-65z"/></g>
+    <g fill="#d8c49e"><circle cx="1215" cy="700" r="33"/><path d="M1180 738q35-24 70 0l25 142h-120z"/><path d="m1183 770-62 72 16 16 73-60zm67 0 68 68-16 17-75-57z"/></g>
+    <g fill="#4d6253"><circle cx="1373" cy="685" r="36"/><path d="M1335 725q38-24 76 0l30 154h-136z"/><path d="m1339 760-62 70 17 17 72-60zm72 0 72 71-16 18-79-60z"/></g>
+  </g>
+  <path fill="#1e342d" opacity=".13" d="M0 0h2400v1000H0z"/>
+</svg>
