@@ -22,6 +22,7 @@ A galeria abre por padrão e permite pré-visualizar e escolher um modelo. Cada 
 | `journal` | Revista de impacto | Capa editorial, narrativa longa, indicadores antes da matéria, índice de atuação e equipe em linhas. |
 | `community` | Rede comunitária | Diretório pesquisável de integrantes, serviços em acordeão e jornada orientada a encontrar ajuda. |
 | `campaign` | Campanha | Abertura-manifesto em tela cheia, passos de atuação numerados e chamadas de contato destacadas. |
+| `premium` | Premium | Hero imersivo, apresentação editorial, atuação em etapas, equipe e contato em uma composição sofisticada. |
 
 As pré-visualizações e a escolha na galeria duram apenas até recarregar a página; não são armazenadas. Para aplicar uma escolha no projeto do cliente, edite `theme.template` em `src/site.ts`. Para publicar diretamente esse site sem o catálogo, defina também `theme.showGallery: false`. Para voltar à galeria, use `true`.
 
@@ -29,7 +30,7 @@ A galeria começa com `showGallery: true` para facilitar a comparação. O model
 
 ## Conteúdo e seções
 
-Edite `src/site.ts` para personalizar organização, slogan, navegação, apresentação, áreas, métricas, integrantes e contato. Os modelos reutilizam esses dados, mas os dispõem de maneiras diferentes. Campos opcionais ou variantes existentes:
+Edite `src/site.ts` para personalizar organização, slogan, navegação, apresentação, áreas, métricas, integrantes e contato. Os modelos reutilizam esses dados, mas os dispõem de maneiras diferentes. Use o seletor no cabeçalho para alternar entre português e inglês; o português é o padrão. Atualize `site.translations.en` junto com o conteúdo em português para manter as versões sincronizadas. A escolha de idioma vale até recarregar a página. Campos opcionais ou variantes existentes:
 
 - `hero.imageSrc` e `hero.imageAlt`: imagem e descrição do banner/capa;
 - `logo`: imagem opcional usada no cabeçalho e rodapé; sem ela, aparece a inicial da organização;

@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from "react";
-import { site, type ColorMode, type SiteTemplateId } from "./site";
+import { LocaleContext } from "./localization";
+import { getSiteContent, site, type ColorMode, type Language, type SiteTemplateId } from "./site";
 import { SiteTemplateView, TemplateGallery } from "./SiteTemplates";
 import "./styles.css";
 
@@ -8,8 +9,16 @@ export default function App() {
   const [modeOverride, setModeOverride] = useState<Exclude<ColorMode, "system"> | null>(null);
   const [activeTemplate, setActiveTemplate] = useState<SiteTemplateId | null>(site.theme.showGallery ? null : site.theme.template);
   const [selectedTemplate, setSelectedTemplate] = useState<SiteTemplateId>(site.theme.template);
+  const [language, setLanguage] = useState<Language>("pt");
+  const content = getSiteContent(language);
   const mode = modeOverride ?? (site.theme.mode === "system" ? systemDark ? "dark" : "light" : site.theme.mode);
   const palette = site.theme.palette[mode];
+  useEffect(() => {
+    document.documentElement.lang = language === "pt" ? "pt-BR" : "en";
+    document.title = `${content.organization} — ${content.tagline}`;
+    const description = document.querySelector<HTMLMetaElement>('meta[name="description"]');
+    if (description) description.content = content.hero.description;
+  }, [content.hero.description, content.organization, content.tagline, language]);
   const paletteStyle = {
     "--paper": palette.background,
     "--surface": palette.surface,
@@ -41,7 +50,8 @@ export default function App() {
   }
 
   return (
-    <div className="app-shell" data-mode={mode} style={paletteStyle}>
+    <LocaleContext.Provider value={{ language, setLanguage }}>
+      <div className="app-shell" data-mode={mode} style={paletteStyle}>
       {activeTemplate ? (
         <SiteTemplateView
           template={activeTemplate}
@@ -61,6 +71,7 @@ export default function App() {
           onSelect={setSelectedTemplate}
         />
       )}
-    </div>
+      </div>
+    </LocaleContext.Provider>
   );
 }
