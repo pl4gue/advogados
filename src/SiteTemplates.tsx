@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SyntheticEvent } from "react";
 import { site, type SiteTemplateId, type TeamGroup, type TeamMember } from "./site";
 
 const templateOptions: { id: SiteTemplateId; name: string; promise: string; style: string; features: string[] }[] = [
@@ -23,16 +23,15 @@ interface PreviewProps extends ThemeControlProps {
 }
 
 function resolveAsset(path: string): string {
-  if (/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(path)) return path;
+  if (/^https:\/\//i.test(path)) return path;
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
 }
 
 function ThemeToggle({ mode, onToggleMode }: ThemeControlProps) {
   const next = mode === "dark" ? "claro" : "escuro";
   return (
-    <button className="theme-toggle" type="button" aria-label={`Ativar modo ${next}`} aria-pressed={mode === "dark"} onClick={onToggleMode}>
+    <button className="theme-toggle" type="button" aria-label={`Ativar modo ${next}`} title={`Ativar modo ${next}`} aria-pressed={mode === "dark"} onClick={onToggleMode}>
       <span aria-hidden="true">{mode === "dark" ? "☀" : "☾"}</span>
-      <span>{mode === "dark" ? "Claro" : "Escuro"}</span>
     </button>
   );
 }
@@ -40,7 +39,7 @@ function ThemeToggle({ mode, onToggleMode }: ThemeControlProps) {
 function Brand({ href = "#top" }: { href?: string }) {
   return (
     <a className="brand" href={href} aria-label={`Início: ${site.organization}`}>
-      {site.logo ? <img className="brand-logo" src={resolveAsset(site.logo.src)} alt={site.logo.alt} /> : <span className="brand-mark" aria-hidden="true">{site.organization.trim().charAt(0).toUpperCase()}</span>}
+      {site.logo ? <img className="brand-logo" src={resolveAsset(site.logo.src)} alt={site.logo.alt} referrerPolicy="no-referrer" /> : <span className="brand-mark" aria-hidden="true">{site.organization.trim().charAt(0).toUpperCase()}</span>}
       <span>{site.organization}<small>{site.tagline}</small></span>
     </a>
   );
@@ -76,7 +75,7 @@ function PreviewHeroText({ className = "" }: { className?: string }) {
 }
 
 function HeroImage({ className = "" }: { className?: string }) {
-  return <figure className={`hero-media ${className}`}><img src={resolveAsset(site.hero.imageSrc)} alt={site.hero.imageAlt} /><figcaption>{site.hero.imageAlt}</figcaption></figure>;
+  return <figure className={`hero-media ${className}`}><img src={resolveAsset(site.hero.imageSrc)} alt={site.hero.imageAlt} fetchPriority="high" decoding="async" referrerPolicy="no-referrer" /><figcaption>{site.hero.imageAlt}</figcaption></figure>;
 }
 
 function EditorialHero() {
@@ -183,48 +182,73 @@ function getTeamGroups(): TeamGroup[] {
   return site.team.variant === "groups" ? site.team.groups : [{ name: site.team.title, description: "", members: site.team.members }];
 }
 
+function matchesTeamMember(member: TeamMember, groupName: string, normalizedQuery: string): boolean {
+  return !normalizedQuery || `${member.name} ${member.role} ${member.detail} ${groupName}`.toLocaleLowerCase("pt-BR").includes(normalizedQuery);
+}
+
+function filterTeamGroups(groups: TeamGroup[], normalizedQuery: string): TeamGroup[] {
+  return groups
+    .map((group) => ({ ...group, members: group.members.filter((member) => matchesTeamMember(member, group.name, normalizedQuery)) }))
+    .filter((group) => group.members.length > 0);
+}
+
 function MemberCard({ member, index = 0, compact = false }: { member: TeamMember; index?: number; compact?: boolean }) {
   return (
     <article className={`member-card${compact ? " member-card--compact" : ""}`}>
       <div className={`member-image member-image--${(index % 3) + 1}`}>
-        {member.image ? <img src={resolveAsset(member.image.src)} alt={member.image.alt} /> : <span role="img" aria-label={`Iniciais de ${member.name}`}>{member.initials}</span>}
+        {member.image ? <img src={resolveAsset(member.image.src)} alt={member.image.alt} loading="lazy" decoding="async" referrerPolicy="no-referrer" /> : <span role="img" aria-label={`Iniciais de ${member.name}`}>{member.initials}</span>}
       </div>
       <div className="member-copy"><h3>{member.name}</h3><p className="member-role">{member.role}</p><p className="member-detail">{member.detail}</p></div>
     </article>
   );
 }
 
+function TeamSearchField({ query, onQueryChange, resultCount }: { query: string; onQueryChange: (query: string) => void; resultCount: number }) {
+  return (
+    <>
+      <label className="directory-search-label" htmlFor="team-search">Busque por pessoa, equipe ou área de atuação</label>
+      <input id="team-search" className="directory-search" type="search" value={query} onChange={(event) => onQueryChange(event.target.value)} placeholder="Ex.: direitos fundamentais" />
+      <p className="directory-count" aria-live="polite">{resultCount} {resultCount === 1 ? "integrante encontrado" : "integrantes encontrados"}</p>
+    </>
+  );
+}
+
 function TeamSection({ layout = "cards" }: { layout?: "cards" | "rows" | "grouped" }) {
+  const [query, setQuery] = useState("");
   const groups = getTeamGroups();
+  const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
+  const filteredGroups = filterTeamGroups(groups, normalizedQuery);
+  const resultCount = filteredGroups.reduce((total, group) => total + group.members.length, 0);
   return (
     <section className={`team team--${layout}`} id="people">
       <SectionHeading eyebrow={site.team.eyebrow} title={site.team.title} number="04" />
-      <div className="team-groups">
-        {groups.map((group, groupIndex) => <section className="team-group" key={`${group.name}-${groupIndex}`} aria-label={group.name}>
-          {groups.length > 1 && <header className="team-group-heading"><h3>{group.name}</h3>{group.description && <p>{group.description}</p>}</header>}
-          <div className={`member-list member-list--${layout}`}>
-            {group.members.map((member, index) => layout === "rows" ? (
-              <article className="member-row" key={`${member.name}-${index}`}><span className="member-row-number">{String(index + 1).padStart(2, "0")}</span><span className="member-row-initials" aria-hidden="true">{member.initials}</span><h3>{member.name}</h3><span>{member.role}</span><span>{member.detail}</span></article>
-            ) : <MemberCard key={`${member.name}-${index}`} member={member} index={index} compact={layout === "grouped"} />)}
-          </div>
-        </section>)}
-      </div>
+      <TeamSearchField query={query} onQueryChange={setQuery} resultCount={resultCount} />
+      {filteredGroups.length === 0 ? <p className="directory-empty" role="status">Nenhum integrante corresponde à busca. Tente outro termo.</p> : (
+        <div className="team-groups">
+          {filteredGroups.map((group, groupIndex) => <section className="team-group" key={`${group.name}-${groupIndex}`} aria-label={group.name}>
+            {groups.length > 1 && <header className="team-group-heading"><h3>{group.name}</h3>{group.description && <p>{group.description}</p>}</header>}
+            <div className={`member-list member-list--${layout}`}>
+              {group.members.map((member, index) => layout === "rows" ? (
+                <article className="member-row" key={`${member.name}-${index}`}><span className="member-row-number">{String(index + 1).padStart(2, "0")}</span><span className="member-row-initials" aria-hidden="true">{member.initials}</span><h3>{member.name}</h3><span>{member.role}</span><span>{member.detail}</span></article>
+              ) : <MemberCard key={`${member.name}-${index}`} member={member} index={index} compact={layout === "grouped"} />)}
+            </div>
+          </section>)}
+        </div>
+      )}
     </section>
   );
 }
 
 function SearchableTeam() {
   const [query, setQuery] = useState("");
-  const members = getTeamGroups().flatMap((group) => group.members.map((member) => ({ ...member, group: group.name })));
   const normalizedQuery = query.trim().toLocaleLowerCase("pt-BR");
-  const filtered = members.filter((member) => `${member.name} ${member.role} ${member.detail} ${member.group}`.toLocaleLowerCase("pt-BR").includes(normalizedQuery));
+  const filtered = getTeamGroups().flatMap((group) => group.members.flatMap((member) =>
+    matchesTeamMember(member, group.name, normalizedQuery) ? [{ ...member, group: group.name }] : []));
 
   return (
     <section className="team team--directory" id="people">
       <SectionHeading eyebrow={site.team.eyebrow} title={site.team.title} number="04" />
-      <label className="directory-search-label" htmlFor="team-search">Busque por pessoa, equipe ou área de atuação</label>
-      <input id="team-search" className="directory-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ex.: direitos fundamentais" />
-      <p className="directory-count" aria-live="polite">{filtered.length} {filtered.length === 1 ? "integrante encontrado" : "integrantes encontrados"}</p>
+      <TeamSearchField query={query} onQueryChange={setQuery} resultCount={filtered.length} />
       <div className="directory-results">
         {filtered.map((member, index) => <article className="directory-row" key={`${member.group}-${member.name}-${index}`}>
           <MemberCard member={member} index={index} compact />
@@ -237,7 +261,7 @@ function SearchableTeam() {
 }
 
 function ContactForm() {
-  function submitInquiry(event: FormEvent<HTMLFormElement>) {
+  function submitInquiry(event: SyntheticEvent<HTMLFormElement>) {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     try {

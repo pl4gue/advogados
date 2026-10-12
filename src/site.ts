@@ -61,6 +61,7 @@ export interface SiteConfig {
 // Personalize all identity, copy, contact details, and supported layouts here.
 export const site: SiteConfig = {
   organization: "Advocacia",
+    logo: { src: "/images/logo.png", alt: ""},
   tagline: "Orientação segura para um futuro mais justo.",
   theme: {
     // Escolha um modelo: "editorial" | "mosaic" | "journal" | "community" | "campaign".

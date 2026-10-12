@@ -51,7 +51,7 @@ Use combinações com contraste suficiente, principalmente para texto, botões, 
 
 ## Publicar no GitHub Pages
 
-O workflow `.github/workflows/deploy-pages.yml` compila e publica o site quando há `push` para `main`; também pode ser iniciado manualmente pela aba **Actions**. Ele usa `npm ci` e publica apenas o diretório `dist`, com permissões limitadas.
+O workflow `.github/workflows/deploy-pages.yml` compila e publica o site quando há `push` para `main`; também pode ser iniciado manualmente pela aba **Actions**. Ele usa `npm ci` e publica apenas o diretório `dist`, com permissões limitadas. As Actions são fixadas por SHA, o checkout não persiste credenciais e o Dependabot propõe atualizações de Actions e npm.
 
 Configuração inicial:
 
